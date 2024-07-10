@@ -1,7 +1,9 @@
-// Lesson-1
+// Lesson-2
 
-function sayHello (name) {
-    console.log('Hello ' + name)
-}
+console.log() //gloabal
 
-sayHello('Zafar')
+// console.log(window) //there is no window object in node
+console.log(global) //instead we have global object
+
+var msg = 'Hello world'
+console.log(global.msg) //undefined, because msg variable is available only in this (app.js) file not outside of browser
