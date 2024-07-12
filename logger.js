@@ -31,3 +31,19 @@
 // console.log(module)
 // console.log(__dirname)
 // console.log(__filename)
+
+//                                                                Extending EventEmitter
+
+// const EventEmitter = require('events')
+//
+// class Logger extends EventEmitter {
+//   log(message) {
+//     // Send HTTP request
+//     console.log(message)
+//
+//     // Raise an event
+//     this.emit('msg', {id: 1, url: 'https://whoscored.com'})
+//   }
+// }
+//
+// module.exports = Logger

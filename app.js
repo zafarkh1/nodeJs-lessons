@@ -61,13 +61,50 @@
 
 //                                                              Events module && Event arguments
 
-const EventEmitter = require('events')
-const emitter = new EventEmitter()
+// const EventEmitter = require('events')
+// const emitter = new EventEmitter()
+//
+// // Register a listener
+// emitter.on('msg', function (args) {
+//   console.log('Data: ', args)
+// })
+//
+// // Raise an event
+// emitter.emit('msg', {id: 1, url: 'https://whoscored.com'})
 
-// Register a listener
-emitter.on('msg', function (args) {
-  console.log('Data: ', args)
-})
+//                                                               Extending EventEmitter
 
-// Raise an event
-emitter.emit('msg', {id: 1, url: 'https://whoscored.com'})
+// const Logger = require('./logger')
+// const logger = new Logger();
+//
+// // Register a listener
+// logger.on('msg', (arg) => {
+//   console.log('Data: ', arg)
+// })
+//
+// logger.log("What's up")
+
+//                                                                HTTP module
+
+// const http = require('http')
+//
+// const server = http.createServer((req, res) => {
+//   if(req.url === '/') {
+//     res.write('Bye world')
+//     res.end()
+//   }
+//
+//   if(req.url === '/api/users') {
+//     res.write(JSON.stringify([1,2,3,4,5]))
+//     res.end()
+//   }
+// })
+//
+// // server.on('connection', (socket) => {
+// //     console.log(socket)
+// //     console.log('New connection...')
+// // })
+//
+//
+// server.listen(8000)
+// console.log('Listening on port 8000')
