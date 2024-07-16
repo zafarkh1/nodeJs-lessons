@@ -1,91 +1,56 @@
 //                                     Building your first server
-const Joi = require('joi');
 const express = require('express');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const config = require('config')
+
+const startupDebugger = require('debug')('app:startup');
+const dbDebugger = require('debug')('app:db')
+
+const Logger = require('./middleware/logger')
+const Authentication = require('./middleware/authentication');
+const home = require('./routes/home');
+const courses = require("./routes/courses");
+
 const app = express();
 
+//           Template engines
+app.set('view engine', 'pug')
+app.set('views', './views')
+
+//           Structuring express application
+app.use('/', home)
+app.use('/api/courses', courses)
+
+//         Built-in Middleware
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }))
+app.use(express.static('public'));
 
-const courses = [
-  {id: 1, name: 'John'},
-  {id: 2, name: 'Doe'},
-  {id: 3, name: 'Sam'},
-]
+//         Creating Custom Middleware
+app.use(Logger)
+app.use(Authentication)
 
-app.get('/', (req, res) => {
-  res.send('Hello World!!!');
-})
+//         Third-party middleware
+app.use(helmet())
+app.use(morgan('combined'));
 
-app.get('/api/courses', (req, res) => {
-  res.send(courses);
-})
+//         Environment
+if(app.get('env') === 'development') {
+  app.use(morgan('tiny'));
+}
 
-//                                       Route parameters
-// app.get('/api/courses/:id', (req, res) => {
-//   console.log(req.params)
-//   res.send(req.params.id)
-// })
+process.env.NODE_ENV = 'production'
+console.log(`ENV: ${process.env.NODE_ENV}`); // undefined
+console.log(`APP: ${app.get('env')}`); // development
 
-app.get('/api/courses/:year/:month/:day', (req, res) => {
-  res.send(req.params)
-})
+//          Configuration
+console.log(`Application name: ${config.get('name')}`) //My first project - development
+startupDebugger(`Password: ${config.get('mail.password')}`) //1234 (export app_password
 
-//                                      Handling HTTP Get request
-app.get('/api/courses/:id', (req, res) => {
-  const course = courses.find(c => c.id === parseInt(req.params.id))
-  if (!course) return res.status(404).send("Not Found")
-  res.send(course)
-})
+//          Debugger
+dbDebugger('Connecting to db...')
 
-//                                      Handling HTTP Post request
-app.post('/api/courses', (req, res) => {
-  //                                    Input validation
-  const { error } = validateCourse(req.body)
-  if (error) return res.status(400).send(error.details[0].message)
 
-  // if(!req.body.name || req.body.length < 3) {
-  //   res.status(400).send("Name is required and must be at least 3 characters")
-  //   return;
-  // }
-
-  const course = {
-    id: courses.length + 1,
-    name: req.body.name
-  }
-  courses.push(course)
-  res.send(course)
-})
-
-//                                     Handling HTTP Put request
-app.put('/api/courses/:id', (req, res) => {
-  const course = courses.find(c => c.id === parseInt(req.params.id))
-  if (!course) return res.status(404).send("Course Not Found")
-
-  const { error } = validateCourse(req.body)
-  if (error) {
-    res.status(400).send(error.details[0].message)
-  }
-
-  course.name = req.body.name
-  res.send(course)
-})
-
-//                                     Handling HTTP Delete request
-app.delete('/api/courses/:id', (req, res) => {
-  const course =  courses.find(c => c.id === parseInt(req.params.id))
-  if(!course) return res.status(404).send('Course Not Found')
-
-  const index = courses.indexOf(course)
-  courses.splice(index, 1)
-  res.send(course)
-})
-
-//                                     Environment variables
 const port = process.env.PORT || 2000;
 app.listen(port, () => console.log(`Listening on port ${port}`));
-
-function validateCourse (course) {
-  const schema = Joi.object({
-    name: Joi.string().min(3).required()
-  })
-  return schema.validate(course)
-}
