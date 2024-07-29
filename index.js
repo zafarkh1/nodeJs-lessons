@@ -1,4 +1,3 @@
-//                               Connecting to mongodb
 const mongoose = require('mongoose');
 
 mongoose.connect('mongodb://localhost/playground', {
@@ -8,137 +7,88 @@ mongoose.connect('mongodb://localhost/playground', {
   .then(() => console.log('Connected to DB'))
   .catch(err => console.error('Error connecting to DB', err));
 
-//                                Schemas
+//                                           Validation && built-in validators
 const courseSchema = new mongoose.Schema({
-  name: String,
+  name: {
+    type: String,
+    required: true,
+    minlength: 3,
+    maxlength: 20,
+    // match: /pattern/,
+    // lowercase: true,
+    uppercase: true,
+    trim: true
+  },
+  category: {
+    type: String,
+    required: true,
+    enum: ['web', 'mobile', 'piano', 'math']
+  },
   author: String,
-  tag: [String],
+  tag: {
+    isAsync: true,
+    type: Array,
+    validate: {
+      validator: function (v) {
+        return new Promise(function (resolve, reject) {
+          resolve(v && v.length > 0)
+        })
+      },
+      message: 'A course should have at least one tag.'
+    }
+  },
   date: {type: Date, default: Date.now},
-  isPublished: Boolean
+  isPublished: Boolean,
+  price: {
+    type: Number,
+    required: function () {
+      return this.isPublished
+    },
+    min: 5,
+    max: 100,
+    get: v => Math.round(v),
+    set: v => Math.round(v),
+  }
 })
 
-//                                Models
 const Course = mongoose.model('Course', courseSchema);
 
 async function createCourse() {
   const course = new Course({
-    name: 'Piano course',
-    author: 'Nigora',
-    tag: ['instrument', 'music'],
+    name: 'Math',
+    category: 'math',
+    author: 'Eshmat',
+    tag: ['algorithm'],
     isPublished: false,
+    price: 100.099999,
   })
-//                              Saving document
-//   const result = await course.save();
-//   console.log(result)
+
+  try {
+    const result = await course.save();
+    console.log(result)
+  } catch (error) {
+    for (let field in error.errors) {
+      console.log(error.errors[field].message);
+    }
+  }
 }
 
 // createCourse()
 
-//                              Querying documents
-// async function getCourses () {
-//   const allCourses = await Course.find()
-// }
-
-// async function getCourses () {
-//   const courses = await Course
-//     .find({author: 'NNU'})
-//     .sort({name: -1})  // => .sort('-name')
-//     .select({author: 1, tag: 1}) // => .select('author tag')
-//     .limit(1)
-// }
-
-//                             Comparison operators
-// async function getCourses() {
-//   // eq (equal)
-//   // neq (not equal)
-//   // gt (greater than)
-//   // gte (greater than or equal)
-//   // lt (less than)
-//   // lte (less than or equal)
-//   // in
-//   // nin (not in)
-//   const courses = await Course
-//     // .find({price: 10})
-//     // .find({price: {$gt: 10, $lte: 20}})
-//     .find({price: {$in: [10, 15, 20]}})
-// }
-
-//                           Logical operators
-// async function getCourses() {
-//   const courses = await Course
-//     .find()
-//     .or([{author: 'Zafar'}, {isPublished: true}])
-//     .and([{author: 'NNU'}, {isPublished: false}])
-// }
-
-//                            Regular expression
-// async function getCourses () {
-//   const courses = await Course
-//     // .find({author: /ˆZafar/i}) // Starts with Zafar and case-insensitive
-//     // .find({author: /Zafar$/i}) // Ends with Zafar and case-insensitive
-//     .find({author: /.*nnu.*/i}) // Contains Zafar and case-insensitive
-// }
-
-//                           Counting
-// async function getCourses () {
-//   const courses = await Course
-//     .find({author: 'NNU'})
-//     .countDocuments()
-// }
-
-//                           Pagination
-// async function getCourses() {
-//   const pageNumber = 2
-//   const pageSize = 10
-//   const courses = await Course
-//     .find()
-//     .skip((pageNumber - 1) * pageSize)
-//     .limit(pageSize)
-// }
-
-//                             Updating a document => Query first
-// async function updateCourse(id) {
-//   const course = await Course.findById(id)
-//   if (!course) return;
-//   course.author = 'John';
-//
-//   const result = await course.save();
-//   console.log(result)
-// }
-//
-// updateCourse('66a7297e5eb9a013f42dc286')
-
-//                           Updating a document => Update first
-// async function updateCourse(id) {
-//   const result = await Course.updateOne({_id: id}, {
-//     $set: {
-//       author: 'NNU'
-//     }
-//   })
-//   console.log(result)
-// }
-//
-// updateCourse('66a7297e5eb9a013f42dc286')
-
-// async function updateCourse(id) {
-//  try {
-//    const course = await Course.findByIdAndUpdate(id, {
-//      $set: {
-//        author: 'Nigora'
-//      }
-//    }, {new: true})
-//    console.log(course)
-//  } catch (e) {
-//    console.log(e)
-//  }
-// }
-//
-// updateCourse('66a7297e5eb9a013f42dc286')
-
-//                          Delete a document
 // async function deleteCourse(id) {
-//   const result = await Course.deleteOne({_id: id})
-//   console.log(result)
+//   const course = await Course.deleteOne({_id: id})
+//   console.log(course)
 // }
 //
-// deleteCourse('66a7297e5eb9a013f42dc286')
+// deleteCourse('66a76fc6fafe2b272e9d125d')
+
+// async function updateCourse(id) {
+//   const course = await Course.updateOne({ _id: id }, {
+//     $set: {
+//       author: 'Toshmat'
+//     }
+//   }, {new: true})
+//   console.log(course)
+// }
+//
+// updateCourse('66a76ff174d89e276d66e2ef')
