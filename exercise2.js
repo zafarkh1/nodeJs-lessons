@@ -1,11 +1,10 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 mongoose.connect('mongodb://localhost/mongo-exercises', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
+  useNewUrlParser: true, useUnifiedTopology: true
 })
-.then(() => console.log('Connected'))
-.catch((err) => console.log(err));
+  .then(() => console.log('Connected to mongodb!'))
+  .catch(err => console.log(err));
 
 const courseSchema = {
   name: String,
@@ -19,11 +18,14 @@ const courseSchema = {
 
 const Course = mongoose.model('Course', courseSchema);
 
-async function getCourses () {
-  return Course
-    .find({isPublished: true, tags: {$in: ['frontend', 'backend']}})
-    .sort({price: -1})
+async function getCourses() {
+  const courses = await Course
+    // .find({tags: {$in: ['frontend', 'backend']}})
+    .find()
+    .or([{tags: 'frontend'}, {tags: 'backend'}])
+    .sort('-price')
     .select({name: 1, author: 1})
+  console.log(courses)
 }
 
-getCourses().then((courses) => {console.log(courses)})
+getCourses()

@@ -22,51 +22,123 @@ const Course = mongoose.model('Course', courseSchema);
 
 async function createCourse() {
   const course = new Course({
-    name: 'React course',
-    author: 'Zafar',
-    tag: ['react', 'frontend'],
-    isPublished: true,
+    name: 'Piano course',
+    author: 'Nigora',
+    tag: ['instrument', 'music'],
+    isPublished: false,
   })
 //                              Saving document
-  const result = await course.save();
-  console.log(result);
+//   const result = await course.save();
+//   console.log(result)
 }
+
+// createCourse()
 
 //                              Querying documents
-async function getCourses() {
-  const pageNumber = 2
-  const pageSize = 10
-  const courses = await Course
-    // .find({author: 'Zafar'})
-    //                            Comparison operators
-    // .find({price: {$gte: 10, $lte: 20}})
-    // .find({price: {$in: [10, 15, 20]}})
-    //                           Logical operators
-    // .find()
-    // .or([{author: 'Zafar'}, {isPublished: true}])
-    // .and([{ author: 'Zafar' }, {isPublished: true}])
-    //                           Regular expression
-    // .find({author: /^Zafar/}) // Starts with Zafar
-    // .find({author: /Doe/i}) // Ends with Doe and case-insensitive
-    .find({author: /.*Zafar.*/i}) // Contains Zafar
-    .sort({name: -1})
-    // .select({name: 1, tag: 1})
-    //                            Counting
-    .countDocuments()
-    //                            Pagination
-    .skip((pageNumber - 1) * pageSize)
-    .limit(pageSize)
-  // .limit(1)
-  console.log(courses)
-}
+// async function getCourses () {
+//   const allCourses = await Course.find()
+// }
 
-getCourses()
+// async function getCourses () {
+//   const courses = await Course
+//     .find({author: 'NNU'})
+//     .sort({name: -1})  // => .sort('-name')
+//     .select({author: 1, tag: 1}) // => .select('author tag')
+//     .limit(1)
+// }
 
-// eq (equal)
-// neq (not equal)
-// gt (greater than)
-// gte (greater than or equal)
-// lt (less than)
-// lte (less than or equal)
-// in
-// nin (not in)
+//                             Comparison operators
+// async function getCourses() {
+//   // eq (equal)
+//   // neq (not equal)
+//   // gt (greater than)
+//   // gte (greater than or equal)
+//   // lt (less than)
+//   // lte (less than or equal)
+//   // in
+//   // nin (not in)
+//   const courses = await Course
+//     // .find({price: 10})
+//     // .find({price: {$gt: 10, $lte: 20}})
+//     .find({price: {$in: [10, 15, 20]}})
+// }
+
+//                           Logical operators
+// async function getCourses() {
+//   const courses = await Course
+//     .find()
+//     .or([{author: 'Zafar'}, {isPublished: true}])
+//     .and([{author: 'NNU'}, {isPublished: false}])
+// }
+
+//                            Regular expression
+// async function getCourses () {
+//   const courses = await Course
+//     // .find({author: /ˆZafar/i}) // Starts with Zafar and case-insensitive
+//     // .find({author: /Zafar$/i}) // Ends with Zafar and case-insensitive
+//     .find({author: /.*nnu.*/i}) // Contains Zafar and case-insensitive
+// }
+
+//                           Counting
+// async function getCourses () {
+//   const courses = await Course
+//     .find({author: 'NNU'})
+//     .countDocuments()
+// }
+
+//                           Pagination
+// async function getCourses() {
+//   const pageNumber = 2
+//   const pageSize = 10
+//   const courses = await Course
+//     .find()
+//     .skip((pageNumber - 1) * pageSize)
+//     .limit(pageSize)
+// }
+
+//                             Updating a document => Query first
+// async function updateCourse(id) {
+//   const course = await Course.findById(id)
+//   if (!course) return;
+//   course.author = 'John';
+//
+//   const result = await course.save();
+//   console.log(result)
+// }
+//
+// updateCourse('66a7297e5eb9a013f42dc286')
+
+//                           Updating a document => Update first
+// async function updateCourse(id) {
+//   const result = await Course.updateOne({_id: id}, {
+//     $set: {
+//       author: 'NNU'
+//     }
+//   })
+//   console.log(result)
+// }
+//
+// updateCourse('66a7297e5eb9a013f42dc286')
+
+// async function updateCourse(id) {
+//  try {
+//    const course = await Course.findByIdAndUpdate(id, {
+//      $set: {
+//        author: 'Nigora'
+//      }
+//    }, {new: true})
+//    console.log(course)
+//  } catch (e) {
+//    console.log(e)
+//  }
+// }
+//
+// updateCourse('66a7297e5eb9a013f42dc286')
+
+//                          Delete a document
+// async function deleteCourse(id) {
+//   const result = await Course.deleteOne({_id: id})
+//   console.log(result)
+// }
+//
+// deleteCourse('66a7297e5eb9a013f42dc286')
