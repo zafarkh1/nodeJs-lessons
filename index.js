@@ -53,28 +53,47 @@ const courseSchema = new mongoose.Schema({
 
 const Course = mongoose.model('Course', courseSchema);
 
-async function createCourse() {
-  const course = new Course({
-    name: 'Math',
-    category: 'math',
-    author: 'Eshmat',
-    tag: ['algorithm'],
-    isPublished: false,
-    price: 100.099999,
-  })
-
-  try {
-    const result = await course.save();
-    console.log(result)
-  } catch (error) {
-    for (let field in error.errors) {
-      console.log(error.errors[field].message);
-    }
-  }
+//                                  Get courses
+async function getCourses() {
+  const courses = await Course.find({}).exec();
+  console.log(courses)
 }
+
+getCourses()
+
+//                                  Get course
+// async function getCourse(id) {
+//   const course = await Course.findById(id).exec();
+//   console.log(course)
+// }
+//
+// getCourse('66a76ff174d89e276d66e2ef')
+
+//                                      Create course
+// async function createCourse() {
+//   const course = new Course({
+//     name: 'Math',
+//     category: 'math',
+//     author: 'Eshmat',
+//     tag: ['algorithm'],
+//     isPublished: false,
+//     price: 100.099999,
+//   })
+//
+//   try {
+//     const result = await course.save();
+//     console.log(result)
+//   } catch (error) {
+//     for (let field in error.errors) {
+//       console.log(error.errors[field].message);
+//     }
+//   }
+// }
 
 // createCourse()
 
+
+//                                         Delete course
 // async function deleteCourse(id) {
 //   const course = await Course.deleteOne({_id: id})
 //   console.log(course)
@@ -82,6 +101,8 @@ async function createCourse() {
 //
 // deleteCourse('66a76fc6fafe2b272e9d125d')
 
+
+//                                          Update course
 // async function updateCourse(id) {
 //   const course = await Course.updateOne({ _id: id }, {
 //     $set: {
